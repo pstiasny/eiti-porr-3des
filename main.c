@@ -8,8 +8,12 @@
 
 const char *USAGE = "Usage: %s <enc|dec> <key1> <key2> <key3>\n";
 
-inline int BIT(uint64_t block, int i) {
-    return ((block >> (64 - i)) & 1);
+static inline int BIT(uint64_t block, int i) {
+    return (block >> (64 - i)) & 1;
+}
+
+static inline int BIT_PERM(uint64_t block, int from, int to) {
+    return BIT(block, from) << (64 - to);
 }
 
 void uint2cblock(uint64_t in, unsigned char *out) {
@@ -30,10 +34,49 @@ uint64_t cblock2uint(unsigned char *in) {
     return out;
 }
 
-uint64_t IP(uint64_t block) {}
-uint64_t IP_inv(uint64_t block) {}
-uint32_t f(uint32_t R, uint64_t key) {}
 uint64_t KS(uint64_t key, int i) {}
+
+uint64_t IP(uint64_t block) {
+    return
+        BIT_PERM(block, 58,  1) | BIT_PERM(block, 50,  2) | BIT_PERM(block, 42,  3) | BIT_PERM(block, 34,  4) |
+        BIT_PERM(block, 26,  5) | BIT_PERM(block, 18,  6) | BIT_PERM(block, 10,  7) | BIT_PERM(block,  2,  8) |
+        BIT_PERM(block, 60,  9) | BIT_PERM(block, 52, 10) | BIT_PERM(block, 44, 11) | BIT_PERM(block, 36, 12) |
+        BIT_PERM(block, 28, 13) | BIT_PERM(block, 20, 14) | BIT_PERM(block, 12, 15) | BIT_PERM(block,  4, 16) |
+        BIT_PERM(block, 62, 17) | BIT_PERM(block, 54, 18) | BIT_PERM(block, 46, 19) | BIT_PERM(block, 38, 20) |
+        BIT_PERM(block, 30, 21) | BIT_PERM(block, 22, 22) | BIT_PERM(block, 14, 23) | BIT_PERM(block,  6, 24) |
+        BIT_PERM(block, 64, 25) | BIT_PERM(block, 56, 26) | BIT_PERM(block, 48, 27) | BIT_PERM(block, 40, 28) |
+        BIT_PERM(block, 32, 29) | BIT_PERM(block, 24, 30) | BIT_PERM(block, 16, 31) | BIT_PERM(block,  8, 32) |
+        BIT_PERM(block, 57, 33) | BIT_PERM(block, 49, 34) | BIT_PERM(block, 41, 35) | BIT_PERM(block, 33, 36) |
+        BIT_PERM(block, 25, 37) | BIT_PERM(block, 17, 38) | BIT_PERM(block,  9, 39) | BIT_PERM(block,  1, 40) |
+        BIT_PERM(block, 59, 41) | BIT_PERM(block, 51, 42) | BIT_PERM(block, 43, 43) | BIT_PERM(block, 35, 44) |
+        BIT_PERM(block, 27, 45) | BIT_PERM(block, 19, 46) | BIT_PERM(block, 11, 47) | BIT_PERM(block,  3, 48) |
+        BIT_PERM(block, 61, 49) | BIT_PERM(block, 53, 50) | BIT_PERM(block, 45, 51) | BIT_PERM(block, 37, 52) |
+        BIT_PERM(block, 29, 53) | BIT_PERM(block, 21, 54) | BIT_PERM(block, 13, 55) | BIT_PERM(block,  5, 56) |
+        BIT_PERM(block, 63, 57) | BIT_PERM(block, 55, 58) | BIT_PERM(block, 47, 59) | BIT_PERM(block, 39, 60) |
+        BIT_PERM(block, 31, 61) | BIT_PERM(block, 23, 62) | BIT_PERM(block, 15, 63) | BIT_PERM(block,  7, 64);
+}
+
+uint64_t IP_inv(uint64_t block) {
+    return
+        BIT_PERM(block, 40,  1) | BIT_PERM(block,  8,  2) | BIT_PERM(block, 48,  3)  | BIT_PERM(block, 16,  4) |
+        BIT_PERM(block, 56,  5) | BIT_PERM(block, 24,  6) | BIT_PERM(block, 64,  7)  | BIT_PERM(block, 32,  8) |
+        BIT_PERM(block, 39,  9) | BIT_PERM(block,  7, 10) | BIT_PERM(block, 47, 11)  | BIT_PERM(block, 15, 12) |
+        BIT_PERM(block, 55, 13) | BIT_PERM(block, 23, 14) | BIT_PERM(block, 63, 15)  | BIT_PERM(block, 31, 16) |
+        BIT_PERM(block, 38, 17) | BIT_PERM(block,  6, 18) | BIT_PERM(block, 46, 19)  | BIT_PERM(block, 14, 20) |
+        BIT_PERM(block, 54, 21) | BIT_PERM(block, 22, 22) | BIT_PERM(block, 62, 23)  | BIT_PERM(block, 30, 24) |
+        BIT_PERM(block, 37, 25) | BIT_PERM(block,  5, 26) | BIT_PERM(block, 45, 27)  | BIT_PERM(block, 13, 28) |
+        BIT_PERM(block, 53, 29) | BIT_PERM(block, 21, 30) | BIT_PERM(block, 61, 31)  | BIT_PERM(block, 29, 32) |
+        BIT_PERM(block, 36, 33) | BIT_PERM(block,  4, 34) | BIT_PERM(block, 44, 35)  | BIT_PERM(block, 12, 36) |
+        BIT_PERM(block, 52, 37) | BIT_PERM(block, 20, 38) | BIT_PERM(block, 60, 39)  | BIT_PERM(block, 28, 40) |
+        BIT_PERM(block, 35, 41) | BIT_PERM(block,  3, 42) | BIT_PERM(block, 43, 43)  | BIT_PERM(block, 11, 44) |
+        BIT_PERM(block, 51, 45) | BIT_PERM(block, 19, 46) | BIT_PERM(block, 59, 47)  | BIT_PERM(block, 27, 48) |
+        BIT_PERM(block, 34, 49) | BIT_PERM(block,  2, 50) | BIT_PERM(block, 42, 51)  | BIT_PERM(block, 10, 52) |
+        BIT_PERM(block, 50, 53) | BIT_PERM(block, 18, 54) | BIT_PERM(block, 58, 55)  | BIT_PERM(block, 26, 56) |
+        BIT_PERM(block, 33, 57) | BIT_PERM(block,  1, 58) | BIT_PERM(block, 41, 59)  | BIT_PERM(block,  9, 60) |
+        BIT_PERM(block, 49, 61) | BIT_PERM(block, 17, 62) | BIT_PERM(block, 57, 63)  | BIT_PERM(block, 25, 64);
+}
+
+uint32_t f(uint32_t R, uint64_t key) {}
 
 uint64_t des_encrypt_block(uint64_t block, uint64_t key) {
     int i;
