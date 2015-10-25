@@ -8,6 +8,10 @@
 
 const char *USAGE = "Usage: %s <enc|dec> <key1> <key2> <key3>\n";
 
+inline int BIT(uint64_t block, int i) {
+    return ((block >> (64 - i)) & 1);
+}
+
 void uint2cblock(uint64_t in, unsigned char *out) {
     int i;
     for (i = 7; i >= 0; --i) {
@@ -26,17 +30,24 @@ uint64_t cblock2uint(unsigned char *in) {
     return out;
 }
 
+uint64_t IP(uint64_t block) {}
+uint64_t IP_inv(uint64_t block) {}
+uint32_t f(uint32_t R, uint64_t key) {}
+uint64_t KS(uint64_t key, int i) {}
+
 uint64_t des_encrypt_block(uint64_t block, uint64_t key) {
-    /* TODO */
-
-    DES_cblock K, input, output;
-    DES_key_schedule KS;
-
-    uint2cblock(key, K);
-    uint2cblock(block, input);
-    DES_set_key(&K, &KS);
-    DES_ecb_encrypt(&input, &output, &KS, DES_ENCRYPT);
-    return cblock2uint(output);
+    int i;
+    uint32_t L, R, L_next;
+    block = IP(block);
+    L = block >> 32;
+    R = block & 0xFFFFFFFF;
+    for (i = 1; i <= 16; ++i) {
+        L_next = L ^ f(R, KS(key, i));
+        R = L;
+        L = L_next;
+    }
+    block = (uint64_t)L << 32 & R;
+    return IP_inv(block);
 }
 
 uint64_t des_decrypt_block(uint64_t block, uint64_t key) {
