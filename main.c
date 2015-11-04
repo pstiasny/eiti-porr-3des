@@ -2,13 +2,17 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdint.h>
+#include <stdbool.h>
 
 #include <unistd.h>
 
 typedef uint64_t KS[16];
 typedef short int perm64_mx_t[64];
+typedef short int E_mx_t[48];
 
-extern perm64_mx_t IP_mx, IP_inv_mx, PC_1_mx, PC_2_mx;
+extern perm64_mx_t IP_mx, IP_inv_mx, PC_1_mx, PC_2_mx, P_mx;
+extern E_mx_t E_mx;
+extern perm64_mx_t S_mx[];
 
 const char *USAGE = "Usage: %s <enc|dec> <key1> <key2> <key3>\n";
 
@@ -20,11 +24,37 @@ static inline int BIT_PERM(uint64_t block, int from, int to) {
     return BIT(block, from) << (64 - to);
 }
 
+
 uint64_t perm64(uint64_t in, perm64_mx_t perm_mx) {
     int i;
     uint64_t out = 0;
     for (i = 0; i < 64; ++i)
         out = out << 1 | BIT(in, perm_mx[i]);
+    return out;
+}
+
+
+
+uint64_t E(uint64_t in) {
+    int i;
+    uint64_t out = 0;
+    for (i = 0; i < 48; ++i)
+        out = out << 1 | ((in >> (32 - E_mx[i])) & 1);
+    return out;
+}
+
+int S(int in, perm64_mx_t s) {
+    int adr;
+    adr=(in & 0b11110) >> 1;
+    adr|=((in >> 4) | ((in & 1)) << 4);
+    return s[adr];
+}
+
+uint32_t perm32(uint32_t in, perm64_mx_t perm_mx) {
+    int i;
+    uint64_t out = 0;
+    for (i = 0; i < 32; ++i)
+        out = out << 1 | ((in >> (32 - perm_mx[i])) & 1);
     return out;
 }
 
@@ -75,7 +105,18 @@ uint64_t IP_inv(uint64_t block) {
     return perm64(block, IP_inv_mx);
 }
 
-uint32_t f(uint32_t R, uint64_t key) {}
+uint32_t f(uint32_t R, uint64_t key) {
+    uint32_t SUM = 0;
+    int i;
+
+    uint64_t pre_S = E(R) ^ key;
+    for (i = 7; i >= 0; i--) {
+    pre_S >>= 6;
+    SUM |= S(pre_S, S_mx[i]) << ((7-i) *4); 
+    }
+    
+    return perm32(SUM, P_mx);
+}
 
 uint64_t des_encrypt_block(uint64_t block, KS ks) {
     int i;
@@ -83,7 +124,7 @@ uint64_t des_encrypt_block(uint64_t block, KS ks) {
     block = IP(block);
     L = block >> 32;
     R = block & 0xFFFFFFFF;
-    for (i = 1; i <= 16; ++i) {
+    for (i = 0; i < 16; ++i) {
         L_next = L ^ f(R, ks[i]);
         R = L;
         L = L_next;
@@ -93,8 +134,18 @@ uint64_t des_encrypt_block(uint64_t block, KS ks) {
 }
 
 uint64_t des_decrypt_block(uint64_t block, KS ks) {
-    /* TODO */
-    return block;
+    int i;
+    uint32_t L, R, L_next;
+    block = IP(block);
+    L = block >> 32;
+    R = block & 0xFFFFFFFF;
+    for (i = 15; i >= 0; --i) {
+        L_next = L ^ f(R, ks[i]);
+        R = L;
+        L = L_next;
+    }
+    block = (uint64_t)L << 32 & R;
+    return IP_inv(block);
 }
 
 uint64_t des3_encrypt_block(uint64_t block, KS ks[3]) {
