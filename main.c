@@ -112,7 +112,7 @@ uint32_t f(uint32_t R, uint64_t key) {
     uint64_t pre_S = E(R) ^ key;
     for (i = 7; i >= 0; i--) {
     pre_S >>= 6;
-    SUM |= S(pre_S, S_mx[i]) << ((7-i) *4); 
+    SUM |= S(pre_S & 0b111111, S_mx[i]) << ((7-i) *4); 
     }
     
     return perm32(SUM, P_mx);
