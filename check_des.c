@@ -11,13 +11,13 @@ START_TEST (test_des_encrypt_block)
     build_KS(0x0123456789ABCDEFL, &ks);
 
     out = des_encrypt_block(0x5468652071756663L, ks);
-    ck_assert(out == 0xA28E91724C4BBA31L);
+    ck_assert_uint_eq(out, 0xA28E91724C4BBA31L);
 
     out = des_encrypt_block(0x6B2062726F776E20L, ks);
-    ck_assert(out == 0x167E47EC24F71D63L);
+    ck_assert_uint_eq(out, 0x167E47EC24F71D63L);
 
     out = des_encrypt_block(0x666F78206A756D70L, ks);
-    ck_assert(out == 0x2C1A917234425365L);
+    ck_assert_uint_eq(out, 0x2C1A917234425365L);
 }
 END_TEST
 
@@ -29,13 +29,13 @@ START_TEST (test_des_decrypt_block)
     build_KS(0x23456789ABCDEF01L, &ks);
 
     out = des_encrypt_block(0xA28E91724C4BBA31L, ks);
-    ck_assert(out == 0x5A2EA7F983A2F53FL);
+    ck_assert_uint_eq(out, 0x5A2EA7F983A2F53FL);
 
     out = des_encrypt_block(0x167E47EC24F71D63L, ks);
-    ck_assert(out == 0xEA141A7DD69701F0L);
+    ck_assert_uint_eq(out, 0xEA141A7DD69701F0L);
 
     out = des_encrypt_block(0x2C1A917234425365L, ks);
-    ck_assert(out == 0x8059EE8212E22A79L);
+    ck_assert_uint_eq(out, 0x8059EE8212E22A79L);
 }
 END_TEST
 
@@ -49,13 +49,13 @@ START_TEST (test_3des_encrypt_block)
     build_KS(0x456789ABCDEF0123L, &ks[2]);
 
     out = des3_encrypt_block(0x5468652071756663L, ks);
-    ck_assert(out == 0xA826FD8CE53B855FL);
+    ck_assert_uint_eq(out, 0xA826FD8CE53B855FL);
 
     out = des3_encrypt_block(0x6B2062726F776E20L, ks);
-    ck_assert(out == 0xCCE21C8112256FE6L);
+    ck_assert_uint_eq(out, 0xCCE21C8112256FE6L);
 
     out = des3_encrypt_block(0x666F78206A756D70L, ks);
-    ck_assert(out == 0x68D5C05DD9B6B900L);
+    ck_assert_uint_eq(out, 0x68D5C05DD9B6B900L);
 }
 END_TEST
 
@@ -69,13 +69,13 @@ START_TEST (test_3des_decrypt_block)
     build_KS(0x456789ABCDEF0123L, &ks[2]);
 
     out = des3_decrypt_block(0xA826FD8CE53B855FL, ks);
-    ck_assert(out == 0x5468652071756663L);
+    ck_assert_uint_eq(out, 0x5468652071756663L);
 
     out = des3_decrypt_block(0xCCE21C8112256FE6L, ks);
-    ck_assert(out == 0x6B2062726F776E20L);
+    ck_assert_uint_eq(out, 0x6B2062726F776E20L);
 
     out = des3_decrypt_block(0x68D5C05DD9B6B900L, ks);
-    ck_assert(out == 0x666F78206A756D70L);
+    ck_assert_uint_eq(out, 0x666F78206A756D70L);
 }
 END_TEST
 
