@@ -4,7 +4,6 @@
 #include <stdint.h>
 
 #include <unistd.h>
-#include <openssl/des.h>
 
 typedef uint64_t KS[16];
 typedef short int perm64_mx_t[64];
