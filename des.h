@@ -19,7 +19,6 @@ uint32_t rotl28(uint32_t in, int l);
 void build_KS(uint64_t key, KS *ks);
 uint64_t IP(uint64_t block);
 uint64_t IP_inv(uint64_t block);
-uint64_t f_pre_s(uint64_t in);
 uint32_t f_s_blocks(uint64_t in);
 uint32_t f(uint32_t R, uint64_t key);
 uint64_t des_encrypt_block(uint64_t block, KS ks);

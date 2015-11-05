@@ -3,20 +3,11 @@
 
 #include "des.h"
 
-static inline int BIT(uint64_t block, int i) {
-    return (block >> (64 - i)) & 1;
-}
-
-static inline int BIT_PERM(uint64_t block, int from, int to) {
-    return BIT(block, from) << (64 - to);
-}
-
-
 uint64_t perm64(uint64_t in, perm64_mx_t perm_mx) {
     int i;
     uint64_t out = 0;
     for (i = 0; i < 64; ++i)
-        out = out << 1 | BIT(in, perm_mx[i]);
+        out = out << 1 | ((in >> (64 - perm_mx[i])) & 1);
     return out;
 }
 
