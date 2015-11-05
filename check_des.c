@@ -79,19 +79,46 @@ START_TEST (test_3des_decrypt_block)
 }
 END_TEST
 
+START_TEST (test_s_block)
+{
+    /* top left of the matrix */
+    ck_assert_uint_eq(S(0b000000, S_mx[0]), 14);
+    /* end of first row */
+    ck_assert_uint_eq(S(0b011110, S_mx[0]), 7);
+    /* end of first column */
+    ck_assert_uint_eq(S(0b100001, S_mx[0]), 15);
+    /* bottom right */
+    ck_assert_uint_eq(S(0b111111, S_mx[0]), 13);
+}
+END_TEST
+
+START_TEST (test_f_s_blocks)
+{
+    ck_assert_uint_eq(f_s_blocks(0x000000000000L), 0xEFA72C4D);
+    ck_assert_uint_eq(f_s_blocks(0x00000000003FL), 0xEFA72C4B);
+    ck_assert_uint_eq(f_s_blocks(0xFC0000000000L), 0xDFA72C4D);
+    ck_assert_uint_eq(f_s_blocks(0xFFFFFFFFFFFFL), 0xD9CE3DCB);
+}
+END_TEST
+
 Suite * des_suite(void)
 {
     Suite *s;
-    TCase *tc_api;
+    TCase *tcase;
 
     s = suite_create("DES");
 
-    tc_api = tcase_create("API");
-    tcase_add_test(tc_api, test_des_encrypt_block);
-    tcase_add_test(tc_api, test_des_decrypt_block);
-    tcase_add_test(tc_api, test_3des_encrypt_block);
-    tcase_add_test(tc_api, test_3des_decrypt_block);
-    suite_add_tcase(s, tc_api);
+    tcase = tcase_create("API");
+    tcase_add_test(tcase, test_des_encrypt_block);
+    tcase_add_test(tcase, test_des_decrypt_block);
+    tcase_add_test(tcase, test_3des_encrypt_block);
+    tcase_add_test(tcase, test_3des_decrypt_block);
+    suite_add_tcase(s, tcase);
+
+    tcase = tcase_create("Internals");
+    tcase_add_test(tcase, test_s_block);
+    tcase_add_test(tcase, test_f_s_blocks);
+    suite_add_tcase(s, tcase);
 
     return s;
 }

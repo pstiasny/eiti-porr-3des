@@ -28,10 +28,11 @@ uint64_t E(uint64_t in) {
     return out;
 }
 
-int S(int in, perm64_mx_t s) {
-    int adr;
-    adr=(in & 0b11110) >> 1;
-    adr|=((in >> 4) | ((in & 1)) << 4);
+uint8_t S(uint8_t in, perm64_mx_t s) {
+    uint8_t adr;
+    adr = (in & 0b11110) >> 1;
+    adr |= in & 0b100000;
+    adr |= (in & 1) << 4;
     return s[adr];
 }
 
@@ -90,17 +91,20 @@ uint64_t IP_inv(uint64_t block) {
     return perm64(block, IP_inv_mx);
 }
 
-uint32_t f(uint32_t R, uint64_t key) {
-    uint32_t SUM = 0;
+uint32_t f_s_blocks(uint64_t in) {
+    uint32_t out = 0;
     int i;
-
-    uint64_t pre_S = E(R) ^ key;
     for (i = 7; i >= 0; i--) {
-        pre_S >>= 6;
-        SUM |= S(pre_S & 0b111111, S_mx[i]) << ((7-i) *4); 
+        out |= S(in & 0b111111, S_mx[i]) << ((7-i) *4); 
+        in >>= 6;
     }
-    
-    return perm32(SUM, P_mx);
+    return out;
+}
+
+uint32_t f(uint32_t R, uint64_t key) {
+    uint64_t pre_S = E(R) ^ key;
+    uint32_t post_S = f_s_blocks(pre_S);
+    return perm32(post_S, P_mx);
 }
 
 uint64_t des_encrypt_block(uint64_t block, KS ks) {

@@ -8,7 +8,7 @@ test: unit_tests functional_tests
 
 functional_tests: des
 	./des enc 0123456789ABCDEF 23456789ABCDEF01 456789ABCDEF0123 < tests/1.in | cmp - tests/1.out
-	./desudec 0123456789ABCDEF 23456789ABCDEF01 456789ABCDEF0123 < tests/1.out | cmp - tests/1.in
+	./des dec 0123456789ABCDEF 23456789ABCDEF01 456789ABCDEF0123 < tests/1.out | cmp - tests/1.in
 	@echo "### OK ###"
 
 unit_tests: des_test_suite
