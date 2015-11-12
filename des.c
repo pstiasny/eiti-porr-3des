@@ -109,7 +109,7 @@ uint64_t des_encrypt_block(uint64_t block, KS ks) {
         R = L;
         L = L_next;
     }
-    block = (uint64_t)L << 32 & R;
+    block = (uint64_t)L << 32 | R;
     return IP_inv(block);
 }
 
@@ -124,7 +124,7 @@ uint64_t des_decrypt_block(uint64_t block, KS ks) {
         R = L;
         L = L_next;
     }
-    block = (uint64_t)L << 32 & R;
+    block = (uint64_t)L << 32 | R;
     return IP_inv(block);
 }
 
