@@ -98,6 +98,18 @@ START_TEST (test_f_s_blocks)
     ck_assert_uint_eq(f_s_blocks(0x00000000003FL), 0xEFA72C4B);
     ck_assert_uint_eq(f_s_blocks(0xFC0000000000L), 0xDFA72C4D);
     ck_assert_uint_eq(f_s_blocks(0xFFFFFFFFFFFFL), 0xD9CE3DCB);
+
+    ck_assert_uint_eq(f_s_blocks(0x28031E58620AL), 0xFFFFFFFF);
+    ck_assert_uint_eq(f_s_blocks(0x71A08869029AL), 0);
+}
+END_TEST
+
+START_TEST (test_f)
+{
+    ck_assert_uint_eq(f(0, 0x71A08869029AL), 0);
+    ck_assert_uint_eq(f(0, 0x28031E58620AL), 0xFFFFFFFF);
+    ck_assert_uint_eq(f(0xFFFFFFFFL, 0x8E5F7796FD65L), 0);
+    ck_assert_uint_eq(f(0xFFFFFFFFL, 0xD7FCE1A79DF5L), 0xFFFFFFFF);
 }
 END_TEST
 
@@ -118,6 +130,7 @@ Suite * des_suite(void)
     tcase = tcase_create("Internals");
     tcase_add_test(tcase, test_s_block);
     tcase_add_test(tcase, test_f_s_blocks);
+    tcase_add_test(tcase, test_f);
     suite_add_tcase(s, tcase);
 
     return s;
