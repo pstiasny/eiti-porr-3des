@@ -101,15 +101,29 @@ START_TEST (test_f_s_blocks)
 
     ck_assert_uint_eq(f_s_blocks(0x28031E58620AL), 0xFFFFFFFF);
     ck_assert_uint_eq(f_s_blocks(0x71A08869029AL), 0);
+    ck_assert_uint_eq(f_s_blocks(0x71A08869028EL), 1);
 }
 END_TEST
 
 START_TEST (test_f)
 {
+    /* trivial outputs */
     ck_assert_uint_eq(f(0, 0x71A08869029AL), 0);
     ck_assert_uint_eq(f(0, 0x28031E58620AL), 0xFFFFFFFF);
     ck_assert_uint_eq(f(0xFFFFFFFFL, 0x8E5F7796FD65L), 0);
     ck_assert_uint_eq(f(0xFFFFFFFFL, 0xD7FCE1A79DF5L), 0xFFFFFFFF);
+
+    /* output (P) permutation:
+       Bit 32 coming out of S blocks ends up as bit 21 after P.  */
+    ck_assert_uint_eq(f(0, 0x71A08869028EL), 0x800);
+}
+END_TEST
+
+START_TEST (test_f_E_permutation)
+{
+    ck_assert_uint_eq(E(0x1), (1L << 47) | (1L << 1));
+    ck_assert_uint_eq(E(0x2), 1L << 2);
+    ck_assert_uint_eq(E(1 << 31), (1L << 46) | 1);
 }
 END_TEST
 
@@ -130,6 +144,7 @@ Suite * des_suite(void)
     tcase = tcase_create("Internals");
     tcase_add_test(tcase, test_s_block);
     tcase_add_test(tcase, test_f_s_blocks);
+    tcase_add_test(tcase, test_f_E_permutation);
     tcase_add_test(tcase, test_f);
     suite_add_tcase(s, tcase);
 

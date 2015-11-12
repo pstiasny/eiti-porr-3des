@@ -13,3 +13,6 @@ functional_tests: des
 
 unit_tests: des_test_suite
 	./des_test_suite
+
+clean:
+	rm -f des_test_suite des
