@@ -2,7 +2,7 @@ des: main.c des.c data.c des.h
 	gcc -o des -g data.c des.c main.c
 
 des_test_suite: des.c data.c des.h check_des.c
-	gcc -o des_test_suite -g data.c des.c check_des.c -lcheck
+	gcc -o des_test_suite -g data.c des.c check_des.c -lcheck -lm -pthread -lrt
 
 test: unit_tests functional_tests
 

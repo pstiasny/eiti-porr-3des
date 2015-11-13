@@ -127,6 +127,14 @@ START_TEST (test_f_E_permutation)
 }
 END_TEST
 
+START_TEST (test_IP)
+{
+    ck_assert_uint_eq(IP(0x56E99EACDE5FF4B1), 0x73F57DA2DECA3E35);
+    ck_assert_uint_eq(IP(0x0123456789ABCDEF), 0xCC00CCFFF0AAF0AA);
+    ck_assert_uint_eq(IP(0x29D823373C5649FB), 0xE2BA38CD829DD3AC);
+}
+END_TEST
+
 Suite * des_suite(void)
 {
     Suite *s;
@@ -146,6 +154,7 @@ Suite * des_suite(void)
     tcase_add_test(tcase, test_f_s_blocks);
     tcase_add_test(tcase, test_f_E_permutation);
     tcase_add_test(tcase, test_f);
+    tcase_add_test(tcase, test_IP);
     suite_add_tcase(s, tcase);
 
     return s;
