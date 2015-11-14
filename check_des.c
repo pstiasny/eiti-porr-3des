@@ -143,6 +143,21 @@ START_TEST (test_IP_inv)
 }
 END_TEST
 
+START_TEST (test_rotl28)
+{
+    ck_assert_uint_eq(rotl28(0x7519888, 1), 0xEA33110);
+    ck_assert_uint_eq(rotl28(0xD466221, 2), 0x5198887);
+    ck_assert_uint_eq(rotl28(0xEA33110, 1), 0xD466221);
+    ck_assert_uint_eq(rotl28(0x5198887, 2), 0x466221D);
+}
+END_TEST
+
+/* START_TEST (test_KS)
+{
+    ck_assert_uint_eq(build_KS(0x133457799BBCDFFF,), 0xCB3D8B0E17F5);
+}
+END_TEST */
+
 Suite * des_suite(void)
 {
     Suite *s;
@@ -164,6 +179,8 @@ Suite * des_suite(void)
     tcase_add_test(tcase, test_f);
     tcase_add_test(tcase, test_IP);
     tcase_add_test(tcase, test_IP_inv);
+    /*tcase_add_test(tcase, test_KS);*/
+    tcase_add_test(tcase, test_rotl28);
     suite_add_tcase(s, tcase);
 
     return s;
