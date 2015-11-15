@@ -121,9 +121,9 @@ END_TEST
 
 START_TEST (test_f_E_permutation)
 {
-    ck_assert_uint_eq(E(0x1), (1L << 47) | (1L << 1));
-    ck_assert_uint_eq(E(0x2), 1L << 2);
-    ck_assert_uint_eq(E(1 << 31), (1L << 46) | 1);
+    ck_assert_uint_eq(E(0x1), 0x800000000002L);
+    ck_assert_uint_eq(E(0x2), 0x4L);
+    ck_assert_uint_eq(E(0x80000000LL), 0x400000000001LL);
 }
 END_TEST
 
