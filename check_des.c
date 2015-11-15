@@ -152,11 +152,30 @@ START_TEST (test_rotl28)
 }
 END_TEST
 
-/* START_TEST (test_KS)
+START_TEST (test_KS)
 {
-    ck_assert_uint_eq(build_KS(0x133457799BBCDFFF,), 0xCB3D8B0E17F5);
+    KS ks;
+
+    build_KS(0x4000000002000000, &ks);
+
+    ck_assert_uint_eq(ks[0], 0x8000020000);
+    ck_assert_uint_eq(ks[1], 0x800000000002);
+    ck_assert_uint_eq(ks[2], 0x200040000);
+    ck_assert_uint_eq(ks[3], 0x1000000040);
+    ck_assert_uint_eq(ks[4], 0x40008000);
+    ck_assert_uint_eq(ks[5], 0x4000000400);
+    ck_assert_uint_eq(ks[6], 0x100080000);
+    ck_assert_uint_eq(ks[7], 0x1004000);
+    ck_assert_uint_eq(ks[8], 0x80000000800);
+    ck_assert_uint_eq(ks[9], 0x8000010);
+    ck_assert_uint_eq(ks[10], 0x10000);
+    ck_assert_uint_eq(ks[11], 0x800000000);
+    ck_assert_uint_eq(ks[12], 0x2000000004);
+    ck_assert_uint_eq(ks[13], 0x400000080);
+    ck_assert_uint_eq(ks[14], 0x400000000001);
+    ck_assert_uint_eq(ks[15], 0x20200000);
 }
-END_TEST */
+END_TEST
 
 Suite * des_suite(void)
 {
@@ -179,7 +198,7 @@ Suite * des_suite(void)
     tcase_add_test(tcase, test_f);
     tcase_add_test(tcase, test_IP);
     tcase_add_test(tcase, test_IP_inv);
-    /*tcase_add_test(tcase, test_KS);*/
+    tcase_add_test(tcase, test_KS);
     tcase_add_test(tcase, test_rotl28);
     suite_add_tcase(s, tcase);
 

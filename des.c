@@ -1,5 +1,4 @@
 #include <stdlib.h>
-#include <stdbool.h>
 
 #include "des.h"
 
@@ -60,7 +59,7 @@ uint32_t rotl28(uint32_t in, int l) {
 }
 
 void build_KS(uint64_t key, KS *ks) {
-    const int shifts[16] = { 1, 1, 2, 2, 2, 2, 2, 2, 1 };
+    const int shifts[16] = { 1, 1, 2, 2, 2, 2, 2, 2, 1, 2, 2, 2, 2, 2, 2, 1};
     int i;
     /* C and D are 28-bit, LSB aligned to the right */
     uint64_t CD = perm64(key, PC_1_mx);
