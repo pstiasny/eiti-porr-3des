@@ -65,6 +65,8 @@ void build_KS(uint64_t key, KS *ks) {
     uint64_t CD = selection(64, 56, PC_1_mx, key);
     uint32_t C = CD >> 28, D = CD & 0xFFFFFFF;
 
+    printf("INITIAL:  C = %llx  D = %llx  CD = %llx\n", C, D, CD);
+
     for (i = 0; i < 16; ++i) {
         C = rotl28(C, shifts[i]);
         D = rotl28(D, shifts[i]);
