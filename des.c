@@ -68,7 +68,7 @@ void build_KS(uint64_t key, KS *ks) {
     for (i = 0; i < 16; ++i) {
         C = rotl28(C, shifts[i]);
         D = rotl28(D, shifts[i]);
-        CD = ((uint64_t)C << 36) | ((D & 0xFFFFFFF) << 8);
+        CD = ((uint64_t)C << 36) | (((uint64_t)D & 0xFFFFFFF) << 8);
         (*ks)[i] = perm64(CD, PC_2_mx) >> 16;
     }
 }
