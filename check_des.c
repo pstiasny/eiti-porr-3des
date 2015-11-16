@@ -158,22 +158,22 @@ START_TEST (test_KS)
 
     build_KS(0x4000000002000000, &ks);
 
-    ck_assert_uint_eq(ks[0], 0x8000020000);
-    ck_assert_uint_eq(ks[1], 0x800000000002);
-    ck_assert_uint_eq(ks[2], 0x200040000);
-    ck_assert_uint_eq(ks[3], 0x1000000040);
-    ck_assert_uint_eq(ks[4], 0x40008000);
-    ck_assert_uint_eq(ks[5], 0x4000000400);
-    ck_assert_uint_eq(ks[6], 0x100080000);
-    ck_assert_uint_eq(ks[7], 0x1004000);
-    ck_assert_uint_eq(ks[8], 0x80000000800);
-    ck_assert_uint_eq(ks[9], 0x8000010);
-    ck_assert_uint_eq(ks[10], 0x10000);
-    ck_assert_uint_eq(ks[11], 0x800000000);
-    ck_assert_uint_eq(ks[12], 0x2000000004);
-    ck_assert_uint_eq(ks[13], 0x400000080);
-    ck_assert_uint_eq(ks[14], 0x400000000001);
-    ck_assert_uint_eq(ks[15], 0x20200000);
+    ck_assert_uint_eq(ks[0], 0x8000200000);
+    ck_assert_uint_eq(ks[1], 0x800000020000);
+    ck_assert_uint_eq(ks[2], 0x200000100);
+    ck_assert_uint_eq(ks[3], 0x1000000000);
+    ck_assert_uint_eq(ks[4], 0x40400000);
+    ck_assert_uint_eq(ks[5], 0x4000000008);
+    ck_assert_uint_eq(ks[6], 0x100001000);
+    ck_assert_uint_eq(ks[7], 0x1000020);
+    ck_assert_uint_eq(ks[8], 0x80000004000);
+    ck_assert_uint_eq(ks[9], 0x8000000);
+    ck_assert_uint_eq(ks[10], 0x800000);
+    ck_assert_uint_eq(ks[11], 0x800000200);
+    ck_assert_uint_eq(ks[12], 0x2000100000);
+    ck_assert_uint_eq(ks[13], 0x400000000);
+    ck_assert_uint_eq(ks[14], 0x400000002000);
+    ck_assert_uint_eq(ks[15], 0x20000001);
 }
 END_TEST
 
