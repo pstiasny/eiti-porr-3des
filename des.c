@@ -3,19 +3,19 @@
 #include "des.h"
 
 uint64_t perm64(uint64_t in, perm64_mx_t perm_mx) {
+    return selection(64, 64, perm_mx, in);
+}
+
+uint64_t selection(int bits_in, int bits_out, short int mx[], uint64_t in) {
     int i;
     uint64_t out = 0;
-    for (i = 0; i < 64; ++i)
-        out = out << 1 | ((in >> (64 - perm_mx[i])) & 1);
+    for (i = 0; i < bits_out; ++i)
+        out = out << 1 | ((in >> (bits_in - mx[i])) & 1);
     return out;
 }
 
 uint64_t E(uint64_t in) {
-    int i;
-    uint64_t out = 0;
-    for (i = 0; i < 48; ++i)
-        out = out << 1 | ((in >> (32 - E_mx[i])) & 1);
-    return out;
+    return selection(32, 48, E_mx, in);
 }
 
 uint8_t S(uint8_t in, perm64_mx_t s) {
@@ -62,14 +62,15 @@ void build_KS(uint64_t key, KS *ks) {
     const int shifts[16] = { 1, 1, 2, 2, 2, 2, 2, 2, 1, 2, 2, 2, 2, 2, 2, 1};
     int i;
     /* C and D are 28-bit, LSB aligned to the right */
-    uint64_t CD = perm64(key, PC_1_mx);
-    uint32_t C = CD >> 36, D = (CD >> 8) & 0xFFFFFFF;
+    uint64_t CD = selection(64, 56, PC_1_mx, key);
+    uint32_t C = CD >> 28, D = CD & 0xFFFFFFF;
 
     for (i = 0; i < 16; ++i) {
         C = rotl28(C, shifts[i]);
         D = rotl28(D, shifts[i]);
-        CD = ((uint64_t)C << 36) | ((D & 0xFFFFFFF) << 8);
-        (*ks)[i] = perm64(CD, PC_2_mx) >> 16;
+        CD = ((uint64_t)C << 28) | ((uint64_t)D & 0xFFFFFFFULL);
+        printf("i = %d  C = %llx  D = %llx  CD = %llx\n", i, C, D, CD);
+        (*ks)[i] = selection(56, 48, PC_2_mx, CD);
     }
 }
 

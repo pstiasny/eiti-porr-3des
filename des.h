@@ -9,6 +9,7 @@ extern E_mx_t E_mx;
 extern perm64_mx_t S_mx[];
 
 
+uint64_t selection(int bits_in, int bits_out, short int mx[], uint64_t in);
 uint64_t perm64(uint64_t in, perm64_mx_t perm_mx);
 uint64_t E(uint64_t in);
 uint8_t S(uint8_t in, perm64_mx_t s);
