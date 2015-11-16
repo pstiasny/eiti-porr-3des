@@ -69,8 +69,9 @@ void build_KS(uint64_t key, KS *ks) {
         C = rotl28(C, shifts[i]);
         D = rotl28(D, shifts[i]);
         CD = ((uint64_t)C << 28) | ((uint64_t)D & 0xFFFFFFFULL);
-        printf("i = %d  C = %llx  D = %llx  CD = %llx\n", i, C, D, CD);
         (*ks)[i] = selection(56, 48, PC_2_mx, CD);
+        printf("i = %d  C = %llx  D = %llx  CD = %llx  KS = %llx\n",
+                i, C, D, CD, (*ks)[i]);
     }
 }
 
