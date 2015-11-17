@@ -108,22 +108,22 @@ uint64_t des_encrypt_block(uint64_t block, KS ks) {
         L = R;
         R = R_next;
     }
-    block = (uint64_t)L << 32 | R;
+    block = (uint64_t)R << 32 | L;
     return IP_inv(block);
 }
 
 uint64_t des_decrypt_block(uint64_t block, KS ks) {
     int i;
-    uint32_t L, R, L_next;
+    uint32_t L, R, R_next;
     block = IP(block);
     L = block >> 32;
     R = block & 0xFFFFFFFF;
     for (i = 15; i >= 0; --i) {
-        L_next = L ^ f(R, ks[i]);
-        R = L;
-        L = L_next;
+        R_next = L ^ f(R, ks[i]);
+        L = R;
+        R = R_next;
     }
-    block = (uint64_t)L << 32 | R;
+    block = (uint64_t)R << 32 | L;
     return IP_inv(block);
 }
 
