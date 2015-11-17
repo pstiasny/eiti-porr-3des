@@ -28,13 +28,13 @@ START_TEST (test_des_decrypt_block)
 
     build_KS(0x23456789ABCDEF01L, &ks);
 
-    out = des_encrypt_block(0xA28E91724C4BBA31L, ks);
+    out = des_decrypt_block(0xA28E91724C4BBA31L, ks);
     ck_assert_uint_eq(out, 0x5A2EA7F983A2F53FL);
 
-    out = des_encrypt_block(0x167E47EC24F71D63L, ks);
+    out = des_decrypt_block(0x167E47EC24F71D63L, ks);
     ck_assert_uint_eq(out, 0xEA141A7DD69701F0L);
 
-    out = des_encrypt_block(0x2C1A917234425365L, ks);
+    out = des_decrypt_block(0x2C1A917234425365L, ks);
     ck_assert_uint_eq(out, 0x8059EE8212E22A79L);
 }
 END_TEST
