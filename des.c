@@ -2,19 +2,11 @@
 
 #include "des.h"
 
-uint64_t perm64(uint64_t in, perm64_mx_t perm_mx) {
+uint64_t choice(int bits_in, int bits_out, short int mx[], uint64_t in) {
     int i;
     uint64_t out = 0;
-    for (i = 0; i < 64; ++i)
-        out = out << 1 | ((in >> (64 - perm_mx[i])) & 1);
-    return out;
-}
-
-uint64_t E(uint64_t in) {
-    int i;
-    uint64_t out = 0;
-    for (i = 0; i < 48; ++i)
-        out = out << 1 | ((in >> (32 - E_mx[i])) & 1);
+    for (i = 0; i < bits_out; ++i)
+        out = out << 1 | ((in >> (bits_in - mx[i])) & 1);
     return out;
 }
 
@@ -24,14 +16,6 @@ uint8_t S(uint8_t in, perm64_mx_t s) {
     adr |= in & 0b100000;
     adr |= (in & 1) << 4;
     return s[adr];
-}
-
-uint32_t perm32(uint32_t in, perm64_mx_t perm_mx) {
-    int i;
-    uint64_t out = 0;
-    for (i = 0; i < 32; ++i)
-        out = out << 1 | ((in >> (32 - perm_mx[i])) & 1);
-    return out;
 }
 
 void uint2cblock(uint64_t in, unsigned char *out) {
@@ -62,23 +46,15 @@ void build_KS(uint64_t key, KS *ks) {
     const int shifts[16] = { 1, 1, 2, 2, 2, 2, 2, 2, 1, 2, 2, 2, 2, 2, 2, 1};
     int i;
     /* C and D are 28-bit, LSB aligned to the right */
-    uint64_t CD = perm64(key, PC_1_mx);
-    uint32_t C = CD >> 36, D = (CD >> 8) & 0xFFFFFFF;
+    uint64_t CD = PC_1(key);
+    uint32_t C = CD >> 28, D = CD & 0xFFFFFFF;
 
     for (i = 0; i < 16; ++i) {
         C = rotl28(C, shifts[i]);
         D = rotl28(D, shifts[i]);
-        CD = ((uint64_t)C << 36) | (((uint64_t)D & 0xFFFFFFF) << 8);
-        (*ks)[i] = perm64(CD, PC_2_mx) >> 16;
+        CD = ((uint64_t)C << 28) | ((uint64_t)D & 0xFFFFFFF);
+        (*ks)[i] = PC_2(CD);
     }
-}
-
-uint64_t IP(uint64_t block) {
-    return perm64(block, IP_mx);
-}
-
-uint64_t IP_inv(uint64_t block) {
-    return perm64(block, IP_inv_mx);
 }
 
 uint32_t f_s_blocks(uint64_t in) {
@@ -94,7 +70,7 @@ uint32_t f_s_blocks(uint64_t in) {
 uint32_t f(uint32_t R, uint64_t key) {
     uint64_t pre_S = E(R) ^ key;
     uint32_t post_S = f_s_blocks(pre_S);
-    return perm32(post_S, P_mx);
+    return P(post_S);
 }
 
 uint64_t des_encrypt_block(uint64_t block, KS ks) {
