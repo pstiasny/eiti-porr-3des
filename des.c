@@ -57,7 +57,7 @@ void build_KS(uint64_t key, KS *ks) {
     }
 }
 
-uint32_t f_s_blocks(uint64_t in) {
+uint32_t f_s_boxes(uint64_t in) {
     uint32_t out = 0;
     int i;
     for (i = 7; i >= 0; i--) {
@@ -69,7 +69,7 @@ uint32_t f_s_blocks(uint64_t in) {
 
 uint32_t f(uint32_t R, uint64_t key) {
     uint64_t pre_S = E(R) ^ key;
-    uint32_t post_S = f_s_blocks(pre_S);
+    uint32_t post_S = f_s_boxes(pre_S);
     return P(post_S);
 }
 
