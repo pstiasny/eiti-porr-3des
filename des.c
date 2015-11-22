@@ -10,7 +10,7 @@ uint64_t choice(int bits_in, int bits_out, short int mx[], uint64_t in) {
     return out;
 }
 
-uint8_t S(uint8_t in, perm64_mx_t s) {
+uint8_t S(uint8_t in, short int s[64]) {
     uint8_t adr;
     adr = (in & 0b11110) >> 1;
     adr |= in & 0b100000;
