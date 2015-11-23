@@ -5,7 +5,6 @@
 uint64_t choice(int bits_in, int bits_out, short int mx[], uint64_t in) {
     uint64_t out = 0;
     int i;
-#pragma omp parallel for reduction(|:out)
     for (i = 0; i < bits_out; ++i)
         out |= ((in >> (bits_in - mx[i])) & 1) << (bits_out-i-1);
     return out;
