@@ -12,11 +12,15 @@ test: unit_tests functional_tests
 functional_tests: des
 	./des enc 0123456789ABCDEF 23456789ABCDEF01 456789ABCDEF0123 < tests/1.in | cmp - tests/1.out
 	./des dec 0123456789ABCDEF 23456789ABCDEF01 456789ABCDEF0123 < tests/1.out | cmp - tests/1.in
+	time ./des enc 0123456789ABCDEF 23456789ABCDEF01 456789ABCDEF0123 < tests/2.in | cmp - tests/2.out
+	time ./des dec 0123456789ABCDEF 23456789ABCDEF01 456789ABCDEF0123 < tests/2.out | cmp - tests/2.in
 	@echo "### OK ###"
 
 functional_tests_omp: des_omp
 	./des_omp enc 0123456789ABCDEF 23456789ABCDEF01 456789ABCDEF0123 < tests/1.in | cmp - tests/1.out
 	./des_omp dec 0123456789ABCDEF 23456789ABCDEF01 456789ABCDEF0123 < tests/1.out | cmp - tests/1.in
+	time ./des_omp enc 0123456789ABCDEF 23456789ABCDEF01 456789ABCDEF0123 < tests/2.in | cmp - tests/2.out
+	time ./des_omp dec 0123456789ABCDEF 23456789ABCDEF01 456789ABCDEF0123 < tests/2.out | cmp - tests/2.in
 	@echo "### OK ###"
 
 unit_tests: des_test_suite
