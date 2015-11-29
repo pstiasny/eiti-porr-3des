@@ -46,7 +46,7 @@ int main(int argc, char *argv[]) {
             return 1;
         }
 
-#pragma omp parallel for
+#pragma omp parallel for private(in, out)
         for (j = 0; j < readc / 8; ++j) {
             in = cblock2uint(cin[j]);
             if (mode == ENCRYPT)
