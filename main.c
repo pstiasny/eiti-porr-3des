@@ -5,7 +5,7 @@
 
 #include "des.h"
 
-#define BUF_SIZE 256
+#define BUF_SIZE 2048
 const char *USAGE = "Usage: %s <enc|dec> <key1> <key2> <key3>\n";
 
 int main(int argc, char *argv[]) {
