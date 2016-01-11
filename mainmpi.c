@@ -2,6 +2,7 @@
 #include <stdint.h>
 #include <string.h>
 #include <unistd.h>
+#include "mpi.h"
 
 #include "des.h"
 
@@ -12,8 +13,11 @@ int main(int argc, char *argv[]) {
     enum { ENCRYPT, DECRYPT } mode;
     uint64_t keys[3], in, out;
     KS ks[3];
-    int i, j, readc;
+    int i, j, readc, rank, size;
     unsigned char cin[BUF_SIZE][8], cout[BUF_SIZE][8];
+    MPI_Init(&argc, &argv);
+    MPI_Comm_rank(MPI_COMM_WORLD, &rank);
+    MPI_Comm_size(MPI_COMM_WORLD, &size);
 
     if (argc != 5) {
         fprintf(stderr, USAGE, argv[0]);
@@ -56,5 +60,6 @@ int main(int argc, char *argv[]) {
         }
         write(1, cout, readc);
     }
+    MPI_Finalize();
     return 0;
 }
