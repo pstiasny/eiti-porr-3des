@@ -81,7 +81,7 @@ int main(int argc, char *argv[]) {
    
     blockcount = filestat.st_size/numprocs;
     MPI_Bcast(&blockcount,1,MPI_UINT64_T,0,MPI_COMM_WORLD);	
-    recvbuf = (uint64_t*)malloc(blockcount);
+    recvbuf = (uint64_t*)malloc(blockcount*sizeof(uint64_t));
     MPI_Scatter(buf, blockcount, MPI_UINT64_T, recvbuf, blockcount, MPI_UINT64_T, 0, MPI_COMM_WORLD);
 
     for (j = 0; j < blockcount / 8; ++j) {
