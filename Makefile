@@ -27,10 +27,10 @@ functional_tests_omp: des_omp
 	@echo "### OK ###"
 
 functional_tests_mpi: des_mpi
-	mpirun -np 12 ./des_mpi enc 0123456789ABCDEF 23456789ABCDEF01 456789ABCDEF0123 tests/1.in | cmp - tests/1.out
-	mpirun -np 12 ./des_mpi dec 0123456789ABCDEF 23456789ABCDEF01 456789ABCDEF0123 tests/1.out | cmp - tests/1.in
-	time mpirun -np 12 ./des_mpi enc 0123456789ABCDEF 23456789ABCDEF01 456789ABCDEF0123 tests/2.in | cmp - tests/2.out
-	time mpirun -np 12 ./des_mpi dec 0123456789ABCDEF 23456789ABCDEF01 456789ABCDEF0123 tests/2.out | cmp - tests/2.in
+	mpirun -np 2 -host master, node001 ./des_mpi enc 0123456789ABCDEF 23456789ABCDEF01 456789ABCDEF0123 tests/1.in | cmp - tests/1.out
+	mpirun -np 2 -host master, node001 ./des_mpi dec 0123456789ABCDEF 23456789ABCDEF01 456789ABCDEF0123 tests/1.out | cmp - tests/1.in
+	time mpirun -np 2 -host master, node001 ./des_mpi enc 0123456789ABCDEF 23456789ABCDEF01 456789ABCDEF0123 tests/2.in | cmp - tests/2.out
+	time mpirun -np 2 -host master, node001 ./des_mpi dec 0123456789ABCDEF 23456789ABCDEF01 456789ABCDEF0123 tests/2.out | cmp - tests/2.in
 	@echo "### OK ###"
 
 unit_tests: des_test_suite
