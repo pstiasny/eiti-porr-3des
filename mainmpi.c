@@ -16,15 +16,15 @@ const char *USAGE = "Usage: %s <enc|dec> <key1> <key2> <key3> <infile>\n";
 int main(int argc, char *argv[]) {
     enum { ENCRYPT, DECRYPT } mode;
     struct stat filestat;
-    uint64_t *buf, out;
+    uint64_t *buf, *recvbuf, out;
     uint64_t keys[3];
     KS ks[3];
-    int i, j, readc, rank, size, infile;
+    int i, j, readc, rank, numprocs, infile, blockcount;
     unsigned char cbuf[8];
 
     MPI_Init(&argc, &argv);
     MPI_Comm_rank(MPI_COMM_WORLD, &rank);
-    MPI_Comm_size(MPI_COMM_WORLD, &size);
+    MPI_Comm_size(MPI_COMM_WORLD, &numprocs);
 
     if (argc != 6) {
         fprintf(stderr, USAGE, argv[0]);
@@ -79,15 +79,22 @@ int main(int argc, char *argv[]) {
         }
     }
 
-    if (rank != 0) {MPI_Finalize();return 0;} // TODO: send data to workers
+    if (rank != 0) {MPI_Finalize();return 0;}
+    
+    blockcount = filestat.st_size/numprocs;
+    MPI_Bcast(&blockcount,1,MPI_UINT64_T,0,MPI_COMM_WORLD);	
+    recvbuf = (uint64_t*)malloc(blockcount*sizeof(uint64_t));
+    MPI_Scatter(buf, blockcount, MPI_UINT64_T, recvbuf, blockcount, MPI_UINT64_T, 0, MPI_COMM_WORLD);
 
-    for (j = 0; j < filestat.st_size / 8; ++j) {
+    for (j = 0; j < blockcount / 8; ++j) {
         if (mode == ENCRYPT)
-            out = des3_encrypt_block(buf[j], ks);
+            out = des3_encrypt_block(recvbuf[j], ks);
         else
-            out = des3_decrypt_block(buf[j], ks);
-        buf[j] = out;
+            out = des3_decrypt_block(recvbuf[j], ks);
+        recvbuf[j] = out;
     }
+
+    MPI_Gather(recvbuf, blockcount, MPI_UINT64_T, buf, blockcount, MPI_UINT64_T, 0, MPI_COMM_WORLD);
 
     if (rank == 0) {
         for (j = 0; j < filestat.st_size / 8; ++j) {
