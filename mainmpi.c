@@ -78,12 +78,10 @@ int main(int argc, char *argv[]) {
             buf[j] = cblock2uint(cbuf);
         }
     }
-
-    if (rank != 0) {MPI_Finalize();return 0;}
-    
+   
     blockcount = filestat.st_size/numprocs;
     MPI_Bcast(&blockcount,1,MPI_UINT64_T,0,MPI_COMM_WORLD);	
-    recvbuf = (uint64_t*)malloc(blockcount*sizeof(uint64_t));
+    recvbuf = (uint64_t*)malloc(blockcount);
     MPI_Scatter(buf, blockcount, MPI_UINT64_T, recvbuf, blockcount, MPI_UINT64_T, 0, MPI_COMM_WORLD);
 
     for (j = 0; j < blockcount / 8; ++j) {
