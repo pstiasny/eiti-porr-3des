@@ -84,7 +84,7 @@ int main(int argc, char *argv[]) {
     recvbuf = (uint64_t*)malloc(blockcount*sizeof(uint64_t));
     MPI_Scatter(buf, blockcount, MPI_UINT64_T, recvbuf, blockcount, MPI_UINT64_T, 0, MPI_COMM_WORLD);
 
-    for (j = 0; j < blockcount / 8; ++j) {
+    for (j = 0; j < blockcount; ++j) {
         if (mode == ENCRYPT)
             out = des3_encrypt_block(recvbuf[j], ks);
         else
