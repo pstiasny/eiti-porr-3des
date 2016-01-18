@@ -62,6 +62,11 @@ int main(int argc, char *argv[]) {
             return 1;
         }
 
+        if (filestat.st_size % (numprocs*8)) {
+            fprintf(stderr, "file length must be divisible by the number of processes");
+            return 1;
+        }
+
         buf = (uint64_t*)malloc(filestat.st_size);
         if (!buf) {
             fprintf(stderr, "failed to allocate memory\n");
@@ -79,7 +84,7 @@ int main(int argc, char *argv[]) {
         }
     }
    
-    blockcount = filestat.st_size/numprocs;
+    blockcount = filestat.st_size/8/numprocs;
     MPI_Bcast(&blockcount,1,MPI_UINT64_T,0,MPI_COMM_WORLD);	
     recvbuf = (uint64_t*)malloc(blockcount*sizeof(uint64_t));
     MPI_Scatter(buf, blockcount, MPI_UINT64_T, recvbuf, blockcount, MPI_UINT64_T, 0, MPI_COMM_WORLD);
