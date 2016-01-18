@@ -1,5 +1,5 @@
 #MPICMD="mpirun -np 2 -host master,node001"
-MPICMD=mpirun -np 2
+MPICMD=mpirun -np 7
 
 des: main.c des.c data.c des.h
 	gcc -o des -g data.c des.c main.c

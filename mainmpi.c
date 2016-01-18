@@ -62,11 +62,6 @@ int main(int argc, char *argv[]) {
             return 1;
         }
 
-        if (filestat.st_size % (numprocs*8)) {
-            fprintf(stderr, "file length must be divisible by the number of processes");
-            return 1;
-        }
-
         buf = (uint64_t*)malloc(filestat.st_size);
         if (!buf) {
             fprintf(stderr, "failed to allocate memory\n");
@@ -83,13 +78,33 @@ int main(int argc, char *argv[]) {
             buf[j] = cblock2uint(cbuf);
         }
     }
-   
-    blockcount = filestat.st_size/8/numprocs;
-    MPI_Bcast(&blockcount,1,MPI_UINT64_T,0,MPI_COMM_WORLD);	
-    recvbuf = (uint64_t*)malloc(blockcount*sizeof(uint64_t));
-    MPI_Scatter(buf, blockcount, MPI_UINT64_T, recvbuf, blockcount, MPI_UINT64_T, 0, MPI_COMM_WORLD);
 
-    for (j = 0; j < blockcount; ++j) {
+    blockcount = filestat.st_size / 8;
+    MPI_Bcast(&blockcount,1,MPI_UINT64_T,0,MPI_COMM_WORLD);	
+    int *sendcounts, *displs;
+    int sendcount_rounded = blockcount / numprocs,
+        sendcount_rest = blockcount % numprocs;
+    sendcounts = (int*)malloc(numprocs*sizeof(int));
+    displs = (int*)malloc(numprocs*sizeof(int));
+    for (i = 0; i < numprocs - 1; i++) {
+        sendcounts[i] = sendcount_rounded;
+        displs[i] = i * sendcount_rounded;
+    }
+    sendcounts[numprocs-1] = sendcount_rounded + sendcount_rest;
+    displs[numprocs-1] = (numprocs-1) * sendcount_rounded;
+   
+    int recvcount;
+    if (rank == (numprocs - 1))
+        recvcount = sendcount_rounded + sendcount_rest;
+    else
+        recvcount = sendcount_rounded;
+    recvbuf = (uint64_t*)malloc(recvcount*sizeof(uint64_t));
+    
+
+    MPI_Scatterv(buf, sendcounts, displs, MPI_UINT64_T, recvbuf, blockcount,
+                 MPI_UINT64_T, 0, MPI_COMM_WORLD);
+
+    for (j = 0; j < recvcount; ++j) {
         if (mode == ENCRYPT)
             out = des3_encrypt_block(recvbuf[j], ks);
         else
@@ -97,10 +112,12 @@ int main(int argc, char *argv[]) {
         recvbuf[j] = out;
     }
 
-    MPI_Gather(recvbuf, blockcount, MPI_UINT64_T, buf, blockcount, MPI_UINT64_T, 0, MPI_COMM_WORLD);
+
+    MPI_Gatherv(recvbuf, recvcount, MPI_UINT64_T, buf, sendcounts, displs,
+                MPI_UINT64_T, 0, MPI_COMM_WORLD);
 
     if (rank == 0) {
-        for (j = 0; j < filestat.st_size / 8; ++j) {
+        for (j = 0; j < blockcount; ++j) {
             uint2cblock(buf[j], cbuf);
             write(1, cbuf, 8);
         }
