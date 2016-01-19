@@ -19,7 +19,8 @@ int main(int argc, char *argv[]) {
     uint64_t *buf, *recvbuf, out;
     uint64_t keys[3];
     KS ks[3];
-    int i, j, readc, rank, numprocs, infile, blockcount;
+    int i, j, readc, rank, numprocs, infile;
+    uint64_t blockcount;
     unsigned char cbuf[8];
 
     MPI_Init(&argc, &argv);
